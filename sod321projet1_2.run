@@ -2,10 +2,10 @@ option solver cplexamp;
 model sod321projet1_2.mod;
 data sod321projet1_2.dat;
 
-problem Pb_maitre: beta, lambda, gamma, f, on_decolle_du_depart, c_est_bien_le_premier, on_atterrit_a_l_arrivee, c_est_bien_le_dernier, on_visite_assez_d_aerodromes, carburant, compte_region, visiter_les_regions, pas_de_sur_place, continuite, anticycle;
+problem Pb_maitre: beta, lambda, gamma, f, on_decolle_du_depart, c_est_bien_le_premier, on_atterrit_a_l_arrivee, c_est_bien_le_dernier, on_visite_assez_d_aerodromes, carburant, compte_region, visiter_les_regions, continuite, anticycle;
 option relax_integrality 0;
 
-problem Sous_probleme: S, cycletest, coherence, minimal, uniquement_chemin_valide1, uniquement_chemin_valide2;
+problem Sous_probleme: S, cycletest, coherence, minimal;
 option relax_integrality 0;
 
 let n_cycle := 1;
@@ -20,7 +20,7 @@ solve Sous_probleme;
 if cycletest > -1 then {
 let n_cycle := n_cycle + 1;
 for {k in 1..n , l in 1..n} {
-if lambda[k,l] >= 1 and k <> l then {
+if lambda[k,l] >= 1 then {
 let M_cycle[n_cycle, k, l] := S[k,l]; 
 }
 else let M_cycle[n_cycle, k, l] := 0;
