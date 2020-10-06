@@ -10,7 +10,8 @@ param X{1..n} integer >=0;
 param Y{1..n} integer >=0;
 param D{1..n, 1..n} integer >=0; #D[i,j] distance de l'aérodrome i à l'aérodrome j
 param n_cycle integer >=0;
-param M_cycle {1..n_cycle, 1..n*n} integer >=0;
+param M_cycle {1..n_cycle, 1..n, 1..n} integer;
+param b {i in 1..n_cycle} integer;
 set T = 1..n;
 set S1=T diff {i_a, i_d};
 set S2=T diff {i_d};
@@ -33,11 +34,8 @@ carburant {i in 1..n} : sum{j in 1..n}lambda[i,j]*D[i,j]<=R;
 compte_region {t in 1..m} : beta[t]<=sum{i in 1..n, j in 1..n}lambda[i,j]*((t-Z[i]+2)/(4*n^2*(t-Z[i])+1)+(t-Z[j]+2)/(4*n^2*(t-Z[j])+1));
 visiter_les_regions : sum{t in 1..m}beta[t]=m;
 pas_de_sur_place {i in 1..n} : lambda[i,i] = 0;
-#c1 : lambda[1,3]=1;
-#c2 : lambda[2,5]=1;
-#c3 : lambda[3,2]=1;
-continuite1 {i in S1} : if i<>i_a and i<>i_d then sum{j in 1..n}lambda[i,j]=sum{j in 1..n}lambda[j,i];
-anticycle {i in 1..n_cycle} : sum {k in 1..n, l in 1..n} M_cycle[i,k + n*(l-1)] * lambda[k,l] <= -1;
+continuite {i in S1} : if i<>i_a and i<>i_d then sum{j in 1..n}lambda[i,j]=sum{j in 1..n}lambda[j,i];
+anticycle {i in 1..n_cycle} : sum {k in 1..n, l in 1..n} M_cycle[i, k, l] * lambda[k,l] <= b[i];
 
 #---------------------------------------
 #Sous-probleme
@@ -46,6 +44,7 @@ var S{1..n, 1..n} binary;
 maximize cycletest:
 sum {i in 1..n, j in 1..n} S[i,j]*lambda[i,j] - sum{k in 1..n} S[k,k];
 
-subj to coherence {i in 1..n, j in 1..n}:
-2*S[i,j]*lambda[i,j] <= S[i,i] + S[j,j];
-
+subj to coherence {i in 1..n, j in 1..n}: 2*S[i,j] <= S[i,i] + S[j,j];
+minimal: sum{i in 1..n, j in (i+1)..n} S[i,j] + sum{i in 1..n, j in 1..(i-1)} S[i,j] >= 1;
+uniquement_chemin_valide1{i in 1..n, j in 1..(i-1)}: S[i,j] <= lambda[i,j];
+uniquement_chemin_valide2{i in 1..n, j in (i+1)..n}: S[i,j] <= lambda[i,j];
