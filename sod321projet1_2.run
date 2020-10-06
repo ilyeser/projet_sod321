@@ -2,8 +2,8 @@ option solver cplexamp;
 model sod321projet1_2.mod;
 data sod321projet1_2.dat;
 
-problem Pb_maitre: beta, lambda, gamma, f, on_decolle_du_depart, c_est_bien_le_premier, on_atterrit_a_l_arrivee, c_est_bien_le_dernier, on_visite_assez_d_aerodromes, carburant, compte_region, visiter_les_regions, pas_de_sur_place, continuite1;
-option relax_integrality 0;
+problem Pb_maitre: beta, lambda, f, on_decolle_du_depart, c_est_bien_le_premier, on_atterrit_a_l_arrivee, c_est_bien_le_dernier, on_visite_assez_d_aerodromes, carburant, compte_region, visiter_les_regions, pas_de_sur_place, continuite1;
+option relax_integrality 0; #dans le poly le problème maître est pas résolu en nombre entier, elle récupère juste la borne continue pour avoir une approximation, on pourra essayer ça aussi
 
 problem Sous_probleme: S, cycletest, coherence;
 option relax_integrality 0;
@@ -20,7 +20,7 @@ if lambda[k,l] >= 1 then {
 let M_cycle[n_cycle , k + n*(l-1)] := S[k,l]; 
 }
 else let M_cycle[n_cycle , k + n*(l-1)] := 0;
-};
+}; #ici M_cycle est pas remplie corretement, c'est pas parce que lambda_i,j vaut 0 que le coeff vaut 0 dans la matrice. Je te suggère plutôt de la construire à partir de la diagonale, enlève la condition sur lambda, et fais juste if S[i,i]=1 and S[j,j]=1 then ton coeff vaut 1
 }
 else break;
 };
