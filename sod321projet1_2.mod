@@ -33,6 +33,6 @@ maximize cycletest:
 sum {i in 1..n, j in 1..n : i<>j and D[i,j]<=R and j<>i_d and i<>i_a} S[i,j]*lambda[i,j] - sum{k in 1..n} S[k,k];
 
 subj to 
-#minimal: sum{i in 1..n, j in 1..n} S[i,j] >= 1;
+minimal: sum{i in 1..n, j in 1..n} S[i,j] >= 1;
 coherence1{i in 1..n, j in 1..n}: S[i,j] <= S[i,i];
 coherence2{i in 1..n, j in 1..n}: S[i,j] <= S[j,j];
