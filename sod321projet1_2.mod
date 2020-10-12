@@ -20,7 +20,7 @@ minimize f :sum{i in 1..n, j in 1..n : i<>j and D[i,j]<=R and j<>i_d and i<>i_a}
 subject to
 on_decolle_du_depart : sum{j in 1..n : i_d<>j and D[i_d,j]<=R}lambda[i_d,j]=1;
 on_atterrit_a_l_arrivee : sum{j in 1..n : i_a<>j and D[i_a,j]<=R}lambda[j,i_a]=1;
-on_visite_assez_d_aerodromes : sum{i in 1..n, j in 1..n : i<>j and D[i,j]<=R}lambda[i,j]>=A_min-1;
+on_visite_assez_d_aerodromes : sum{i in 1..n, j in 1..n : i<>j and D[i,j]<=R and j<>i_d and i<>i_a}lambda[i,j]>=A_min-1;
 compte_region {t in 1..m} : 1<=sum{i in 1..n, j in 1..n : i<>j and D[i,j]<=R and j<>i_d and i<>i_a and (Z[i]=t or Z[j]=j)}lambda[i,j];
 continuite {i in 1..n : i<>i_a and i<>i_d} : sum{j in 1..n : i<>j and D[i,j]<=R and j<>i_d and i<>i_a}lambda[i,j]=sum{j in 1..n : i<>j and D[i,j]<=R and i<>i_d and j<>i_a}lambda[j,i];
 anticycle {k in 1..n_cycle} : sum {i in 1..n, j in 1..n : i<>j and D[i,j]<=R and j<>i_d and i<>i_a} M_cycle[k, i] * M_cycle[k, j] * lambda[i,j] <= b[k];
