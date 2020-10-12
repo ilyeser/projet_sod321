@@ -28,4 +28,4 @@ else break;
 printf "--Valeur optimale : ";
 display f;
 display lambda;
-display beta;
+display n_cycle;
