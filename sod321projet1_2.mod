@@ -11,38 +11,32 @@ param Y{1..n} integer >=0;
 param D{1..n, 1..n} integer >=0; #D[i,j] distance de l'aérodrome i à l'aérodrome j
 param n_cycle integer >=0;
 param M_cycle {1..n_cycle, 1..n, 1..n} integer;
-param b {i in 1..n_cycle} integer;
-set T = 1..n;
-set S1=T diff {i_a, i_d};
-set S2=T diff {i_d};
-
-
+param b {1..n_cycle} integer;
 
 var beta{1..m} binary;
-var lambda{1..n,1..n} binary;
-var gamma{1..n} integer >=0;
+var lambda{i in 1..n,j in 1..n : i<>j and D[i,j]<=R} binary;
 
-minimize f :sum{i in 1..n, j in 1..n} lambda[i,j]*D[i,j];
+minimize f :sum{i in 1..n, j in 1..n : i<>j and D[i,j]<=R} lambda[i,j]*D[i,j];
 
 subject to
-on_decolle_du_depart : sum{j in 1..n}lambda[i_d,j]=1;
-c_est_bien_le_premier : sum{j in 1..n}lambda[j,i_d]=0;
-on_atterrit_a_l_arrivee : sum{j in 1..n}lambda[j,i_a]=1;
-c_est_bien_le_dernier : sum{j in 1..n}lambda[i_a,j]=0;
-on_visite_assez_d_aerodromes : sum{i in 1..n, j in 1..n}lambda[i,j]>=A_min-1;
-carburant {i in 1..n} : sum{j in 1..n}lambda[i,j]*D[i,j]<=R;
-compte_region {t in 1..m} : beta[t]<=sum{i in 1..n, j in 1..n}lambda[i,j]*((t-Z[i]+2)/(4*n^2*(t-Z[i])+1)+(t-Z[j]+2)/(4*n^2*(t-Z[j])+1));
+on_decolle_du_depart : sum{j in 1..n : i_d<>j and D[i_d,j]<=R}lambda[i_d,j]=1;
+c_est_bien_le_premier : sum{j in 1..n : i_d<>j and D[i_d,j]<=R}lambda[j,i_d]=0;
+on_atterrit_a_l_arrivee : sum{j in 1..n : i_a<>j and D[i_a,j]<=R}lambda[j,i_a]=1;
+c_est_bien_le_dernier : sum{j in 1..n : i_a<>j and D[i_a,j]<=R}lambda[i_a,j]=0;
+on_visite_assez_d_aerodromes : sum{i in 1..n, j in 1..n : i<>j and D[i,j]<=R}lambda[i,j]>=A_min-1;
+#carburant {i in 1..n} : sum{j in 1..n}lambda[i,j]*D[i,j]<=R; à virer des contraintes dans le .run
+compte_region {t in 1..m} : beta[t]<=sum{i in 1..n, j in 1..n : i<>j and D[i,j]<=R and (Z[i]=t or Z[j]=j)}lambda[i,j];
 visiter_les_regions : sum{t in 1..m}beta[t]=m;
 #pas_de_sur_place {i in 1..n} : lambda[i,i] = 0;
-continuite {i in S1} : if i<>i_a and i<>i_d then sum{j in 1..n}lambda[i,j]=sum{j in 1..n}lambda[j,i];
-anticycle {i in 1..n_cycle} : sum {k in 1..n, l in 1..n} M_cycle[i, k, l] * lambda[k,l] <= b[i];
+continuite {i in 1..n : i<>i_a and i<>i_d} : sum{j in 1..n : i<>j and D[i,j]<=R}lambda[i,j]=sum{j in 1..n : i<>j and D[i,j]<=R}lambda[j,i];
+anticycle {i in 1..n_cycle} : sum {k in 1..n, l in 1..n} M_cycle[i, k, l] * lambda[k,l] <= b[i]; #vu que je galère avec ton indexation je te laisse changer celui là
 
 #---------------------------------------
 #Sous-probleme
 var S{1..n, 1..n} binary;
 
 maximize cycletest:
-sum {i in 1..n, j in 1..n} S[i,j]*lambda[i,j] - sum{k in 1..n} S[k,k];
+sum {i in 1..n, j in 1..n : i<>j and D[i,j]<=R} S[i,j]*lambda[i,j] - sum{k in 1..n} S[k,k];
 
 subj to coherence {i in 1..n, j in 1..n}: 2*S[i,j] <= S[i,i] + S[j,j];
 minimal: sum{i in 1..n, j in 1..n} S[i,j] >= 1;
