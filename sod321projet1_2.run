@@ -5,7 +5,7 @@ data sod321projet1_2.dat;
 problem Pb_maitre: lambda, f, on_decolle_du_depart, on_atterrit_a_l_arrivee, on_visite_assez_d_aerodromes, compte_region, continuite, anticycle;
 option relax_integrality 0;
 
-problem Sous_probleme: S, cycletest, minimal, coherence1, coherence2;
+problem Sous_probleme: S, y, cycletest, minimal, coherence1, coherence2;
 option relax_integrality 0;
 
 let n_cycle := 1;
@@ -20,8 +20,8 @@ solve Sous_probleme;
 if cycletest > -1 then {
 let n_cycle := n_cycle + 1;
 for {i in 1..n} {
-M_cycle[n_cycle,i]=S[i,i]};
-let b[n_cycle] := -1 + sum{k in 1..n} S[k,k];
+M_cycle[n_cycle,i]=S[i]};
+let b[n_cycle] := -1 + sum{k in 1..n} S[k];
 }
 else break;
 };
