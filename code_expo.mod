@@ -32,8 +32,9 @@ var y{i in 1..n, j in 1..n : i<>j} >=0;
 
 maximize cycletest:
 sum {i in 1..n, j in 1..n : i<>j and D[i,j]<=R and j<>i_d and i<>i_a} y[i,j]*lambda[i,j] - sum{i in 1..n} S[i];
+#permet de voir si la trajectoire contient un cycle grâce si la valeur maximale est supérieure à -1 (inéquation des cycles, cf cours)
 
 subj to 
-minimal: sum{i in 1..n} S[i] >= 1;
+minimal: sum{i in 1..n} S[i] >= 1; #on prend au moins un point
 coherence1{i in 1..n, j in 1..n : i<>j}: y[i,j] <= S[i];
 coherence2{i in 1..n, j in 1..n : i<>j}: y[i,j] <= S[j];

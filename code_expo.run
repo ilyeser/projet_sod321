@@ -8,21 +8,21 @@ option relax_integrality 0;
 problem Sous_probleme: S, y, cycletest, minimal, coherence1, coherence2;
 option relax_integrality 0;
 
-let n_cycle := 1;
+let n_cycle := 1; # nombre de contraintes anti-cycle ajoutées
 for {k in 1..n} {
-let M_cycle[n_cycle, k] := 1;
+let M_cycle[n_cycle, k] := 1; # ajout d'une première contrainte "évidente"
 };
 let b[n_cycle] := n-1;
 
 repeat{
-solve Pb_maitre;
-solve Sous_probleme;
-if cycletest > -1 then {
-let n_cycle := n_cycle + 1;
+solve Pb_maitre; #on résoud le problème principal
+solve Sous_probleme; #puis le sous-problème
+if cycletest > -1 then { #si celui-ci présente un cycle...
+let n_cycle := n_cycle + 1; #on incrémente le nombre de contraintes anti-cycle ajoutées...
 for {i in 1..n} {
-let M_cycle[n_cycle,i] := S[i]};
+let M_cycle[n_cycle,i] := S[i]}; #on utilise le tableau S pour identifier le cycle, puis on ajoute la contrainte qui permet de l'éviter
 let b[n_cycle] := -1 + sum{k in 1..n} S[k];
-}
+} #et on retourne dans la boucle jusqu'à ce qu'on ne trouve plus de cycles !
 else break;
 };
 printf "--Valeur optimale : ";
