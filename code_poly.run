@@ -1,6 +1,6 @@
 option solver cplexamp;
-model sod321projet1_1.mod;
-data sod321projet1_1.dat;
+model code_poly.mod;
+data instance_30.dat;
 solve;
 display lambda;
 display beta;

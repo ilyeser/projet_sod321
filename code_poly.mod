@@ -1,4 +1,4 @@
-pparam n integer >0;
+param n integer >0;
 param i_d integer >0;
 param i_a integer >0;
 param A_min integer >0;

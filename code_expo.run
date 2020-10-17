@@ -1,6 +1,6 @@
 option solver cplexamp;
-model sod321projet1_2.mod;
-data sod321projet1_1_1.dat;
+model code_expo.mod;
+data instance_30.dat;
 
 problem Pb_maitre: lambda, f, on_decolle_du_depart, on_atterrit_a_l_arrivee, on_visite_assez_d_aerodromes, compte_region, continuite, anticycle;
 option relax_integrality 0;
