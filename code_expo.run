@@ -51,7 +51,7 @@ printf "_____________Fin de la résolution_____________\n";
 printf "--Valeur optimale : ";
 display f;
 printf "--Solution donnée par : ";
-display lmabda;
+display lambda;
 printf "Nombre de contraintes ajoutées au total : ";
 display n_cycle;
 
