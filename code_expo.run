@@ -1,7 +1,7 @@
 option solver cplexamp;
 option omit_zero_rows 1;
 model code_expo.mod;
-data instance_30.dat;
+data instance_40.dat;
 
 problem Pb_maitre: lambda, f, on_decolle_du_depart, on_atterrit_a_l_arrivee, on_visite_assez_d_aerodromes, compte_region, continuite, anticycle;
 option relax_integrality 0;
