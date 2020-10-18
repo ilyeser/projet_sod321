@@ -18,7 +18,7 @@ for {k in 1..n} {
 let M_cycle[n_cycle, k] := 1; # ajout d'une première contrainte "évidente"
 };
 let b[n_cycle] := n-1;
-printf "_____________Résolution de la relaxation continue_____________";
+printf "_____________Résolution de la relaxation continue_____________\n";
 repeat{
 solve Pb_maitre1; #on résoud le problème principal d'abord pour la relaxation continue
 solve Sous_probleme; #puis le sous-problème
@@ -30,13 +30,13 @@ let b[n_cycle] := -1 + sum{k in 1..n} S[k];
 } #et on retourne dans la boucle jusqu'à ce qu'on ne trouve plus de cycles !
 else break;
 };
-printf "_____________Fin de la relaxation continue_____________";
+printf "_____________Fin de la relaxation continue_____________\n";
 printf "--Valeur optimale de la relaxation continue : ";
 display f;
 printf "Nombre de contraintes ajoutées : ";
 display n_cycle;
 
-printf "_____________Résolution en nombre entier_____________"; #on ne peut plus améliorer le résultat via la relaxation continue, on poursuit en nombres entiers
+printf "_____________Résolution en nombre entier_____________\n"; #on ne peut plus améliorer le résultat via la relaxation continue, on poursuit en nombres entiers
 repeat{
 solve Pb_maitre; #on résoud le problème principal
 solve Sous_probleme; #puis le sous-problème
@@ -48,7 +48,7 @@ let b[n_cycle] := -1 + sum{k in 1..n} S[k];
 } #et on retourne dans la boucle jusqu'à ce qu'on ne trouve plus de cycles !
 else break;
 };
-printf "_____________Fin de la résolution_____________";
+printf "_____________Fin de la résolution_____________\n";
 printf "--Valeur optimale : ";
 display f;
 printf "Nombre de contraintes ajoutées au total : ";
