@@ -1,9 +1,14 @@
 option solver cplexamp;
+option omit_zero_rows 1;
+option cplex_options 'timing=1';
 model code_expo.mod;
 data instance_30.dat;
 
 problem Pb_maitre: lambda, f, on_decolle_du_depart, on_atterrit_a_l_arrivee, on_visite_assez_d_aerodromes, compte_region, continuite, anticycle;
 option relax_integrality 0;
+
+problem Pb_maitre1: lambda, f, on_decolle_du_depart, on_atterrit_a_l_arrivee, on_visite_assez_d_aerodromes, compte_region, continuite, anticycle;
+option relax_integrality 1; #on définit la relaxation continue du problème maître
 
 problem Sous_probleme: S, y, cycletest, minimal, coherence1, coherence2;
 option relax_integrality 0;
@@ -13,7 +18,25 @@ for {k in 1..n} {
 let M_cycle[n_cycle, k] := 1; # ajout d'une première contrainte "évidente"
 };
 let b[n_cycle] := n-1;
+printf "_____________Résolution de la relaxation continue_____________";
+repeat{
+solve Pb_maitre1; #on résoud le problème principal d'abord pour la relaxation continue
+solve Sous_probleme; #puis le sous-problème
+if cycletest > -1 then { #si celui-ci présente un cycle...
+let n_cycle := n_cycle + 1; #on incrémente le nombre de contraintes anti-cycle ajoutées...
+for {i in 1..n} {
+let M_cycle[n_cycle,i] := S[i]}; #on utilise le tableau S pour identifier le cycle, puis on ajoute la contrainte qui permet de l'éviter
+let b[n_cycle] := -1 + sum{k in 1..n} S[k];
+} #et on retourne dans la boucle jusqu'à ce qu'on ne trouve plus de cycles !
+else break;
+};
+printf "_____________Fin de la relaxation continue_____________";
+printf "--Valeur optimale de la relaxation continue : ";
+display f;
+printf "Nombre de contraintes ajoutées : ";
+display n_cycle;
 
+printf "_____________Résolution en nombre entier_____________"; #on ne peut plus améliorer le résultat via la relaxation continue, on poursuit en nombres entiers
 repeat{
 solve Pb_maitre; #on résoud le problème principal
 solve Sous_probleme; #puis le sous-problème
@@ -25,7 +48,9 @@ let b[n_cycle] := -1 + sum{k in 1..n} S[k];
 } #et on retourne dans la boucle jusqu'à ce qu'on ne trouve plus de cycles !
 else break;
 };
+printf "_____________Fin de la résolution_____________";
 printf "--Valeur optimale : ";
 display f;
-display lambda;
+printf "Nombre de contraintes ajoutées au total : ";
 display n_cycle;
+
