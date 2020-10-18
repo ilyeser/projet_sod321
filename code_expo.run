@@ -32,6 +32,8 @@ else break;
 printf "_____________Fin de la relaxation continue_____________\n";
 printf "--Valeur optimale de la relaxation continue : ";
 display f;
+printf "--Solution donnée par : ";
+display lmabda;
 printf "Nombre de contraintes ajoutées : ";
 display n_cycle;
 
