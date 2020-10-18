@@ -6,4 +6,7 @@ data instance_30.dat;
 printf "______Début de la résolution______\n";
 solve;
 printf "______Fin de la résolution______\n";
+printf "--Valeur optimale : ";
+display f;
+printf "--Solution donnée par : ";
 display lambda;
