@@ -1,7 +1,9 @@
 option solver cplexamp;
+option omit_zero_rows 1;
+option cplex_options 'timing=1';
 model code_poly.mod;
 data instance_30.dat;
+printf "______Début de la résolution______\n";
 solve;
+printf "______Fin de la résolution______\n";
 display lambda;
-display beta;
-display gamma;
